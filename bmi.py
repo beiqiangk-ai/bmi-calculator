@@ -22,7 +22,7 @@ while True:
         print("程序已结束,再见!")
         break
     
-    weight_input = input("请输入体重(公斤):")
+    weight_input = input("请输入体重(公斤,比如65):")
 
     try:
         height = float(height_input)
