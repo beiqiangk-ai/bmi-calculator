@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BMI 健康计算器</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, #e8f5f0 0%, #f0f7ff 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .card {
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    padding: 36px 32px;
+    width: 100%;
+    max-width: 400px;
+  }
+  h1 {
+    font-size: 22px;
+    color: #1a2b3c;
+    margin-bottom: 6px;
+    text-align: center;
+  }
+  .subtitle {
+    text-align: center;
+    color: #8a97a3;
+    font-size: 13px;
+    margin-bottom: 28px;
+  }
+  .field {
+    margin-bottom: 18px;
+  }
+  label {
+    display: block;
+    font-size: 14px;
+    color: #4a5661;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid #e2e8ef;
+    border-radius: 10px;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input:focus {
+    border-color: #3fb28a;
+  }
+  button {
+    width: 100%;
+    padding: 13px;
+    background: #3fb28a;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.2s;
+  }
+  button:hover {
+    background: #359979;
+  }
+  .result {
+    margin-top: 24px;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    display: none;
+  }
+  .result.show { display: block; }
+  .bmi-value {
+    font-size: 36px;
+    font-weight: 700;
+    color: #1a2b3c;
+    margin-bottom: 4px;
+  }
+  .bmi-status {
+    font-size: 15px;
+    font-weight: 600;
+    padding: 4px 14px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-top: 6px;
+  }
+  .status-thin { background: #fff4e0; color: #d68a1a; }
+  .status-normal { background: #e3f7ee; color: #1e9e6b; }
+  .status-over { background: #fff0e0; color: #e08020; }
+  .status-obese { background: #fde8e8; color: #d64545; }
+  .error {
+    color: #d64545;
+    font-size: 13px;
+    text-align: center;
+    margin-top: 10px;
+    display: none;
+  }
+  .error.show { display: block; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1>BMI 健康计算器</h1>
+  <p class="subtitle">输入身高体重,快速了解你的健康状态</p>
+
+  <div class="field">
+    <label>身高 (厘米)</label>
+    <input type="number" id="height" placeholder="例如 170">
+  </div>
+
+  <div class="field">
+    <label>体重 (公斤)</label>
+    <input type="number" id="weight" placeholder="例如 65">
+  </div>
+
+  <button onclick="calculateBMI()">计算 BMI</button>
+
+  <p class="error" id="error">请输入有效的身高和体重数值</p>
+
+  <div class="result" id="result">
+    <div class="bmi-value" id="bmiValue">--</div>
+    <span class="bmi-status" id="bmiStatus">--</span>
+  </div>
+</div>
+
+<script>
+function calculateBMI() {
+  const heightInput = document.getElementById('height').value;
+  const weightInput = document.getElementById('weight').value;
+  const errorEl = document.getElementById('error');
+  const resultEl = document.getElementById('result');
+
+  const height = parseFloat(heightInput);
+  const weight = parseFloat(weightInput);
+
+  // 输入校验:身高体重必须是正数,身高按厘米输入更符合日常习惯
+  if (!height || !weight || height <= 0 || weight <= 0) {
+    errorEl.classList.add('show');
+    resultEl.classList.remove('show');
+    return;
+  }
+  errorEl.classList.remove('show');
+
+  // BMI公式:体重(kg) / 身高(m)的平方,这里把厘米转换成米
+  const heightInMeters = height / 100;
+  const bmi = weight / (heightInMeters * heightInMeters);
+  const bmiRounded = bmi.toFixed(1);
+
+  let status, statusClass;
+  if (bmi < 18.5) {
+    status = '偏瘦';
+    statusClass = 'status-thin';
+  } else if (bmi < 24) {
+    status = '正常';
+    statusClass = 'status-normal';
+  } else if (bmi < 28) {
+    status = '偏胖';
+    statusClass = 'status-over';
+  } else {
+    status = '肥胖';
+    statusClass = 'status-obese';
+  }
+
+  document.getElementById('bmiValue').textContent = bmiRounded;
+  const statusEl = document.getElementById('bmiStatus');
+  statusEl.textContent = status;
+  statusEl.className = 'bmi-status ' + statusClass;
+
+  resultEl.classList.add('show');
+}
+</script>
+
+</body>
+</html>
